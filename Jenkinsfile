@@ -1,11 +1,15 @@
 pipeline {
     agent any
+
     stages {
-        stage('Git Checkout') {
+        stage('Checkout') {
             steps {
-                git url: 'git@github.com:DEL-ORG/s7michael-revive-ui.git', branch: 'main'
+                // Checkout the code from the Git repository
+                git branch: 'main', 
+                    credentialsId: 'github-ssh', 
+                    url: 'git@github.com:DEL-ORG/s7michael-revive-ui.git'
             }
         }
-        // Other stages...
+        // Additional stages can be added here
     }
 }
