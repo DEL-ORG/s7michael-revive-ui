@@ -10,6 +10,19 @@ pipeline {
                     url: 'git@github.com:DEL-ORG/s7michael-revive-ui.git'
             }
         }
+
+        stage('Unit Test') {
+            agent {
+                docker {
+                    image 'openjdk:17' // Use an appropriate Docker image with Java installed
+                }
+            }
+            steps {
+                // Run the unit tests using Maven or Gradle
+                sh './mvnw test' // or './gradlew test' if using Gradle
+            }
+        }
+
         // Additional stages can be added here
     }
 }
