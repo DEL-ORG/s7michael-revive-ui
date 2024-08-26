@@ -19,8 +19,14 @@ pipeline {
                 }
             }
             steps {
-                // Run the unit tests using Maven or Gradle
-                sh './mvnw test' // or './gradlew test' if using Gradle
+                script {
+                    // Print the current directory and list files to check the presence of `mvnw`
+                    sh 'pwd'
+                    sh 'ls -la'
+
+                    // Run the unit tests using Maven or Gradle
+                    sh './mvnw test || (echo "Maven wrapper not found" && exit 1)'
+                }
             }
         }
 
