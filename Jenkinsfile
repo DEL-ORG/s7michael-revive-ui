@@ -22,7 +22,10 @@ pipeline {
                 script {
 
                     // Run the unit tests using Maven
-                    sh 'mvn test'
+                    sh '''
+                    cd ui
+                    mvn test
+                    '''
                 }
             }
         }
