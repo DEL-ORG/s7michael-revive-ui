@@ -32,9 +32,12 @@ pipeline {
         stage('SonarQube Analysis') {
             agent {
                 docker {
-                    image 'maven:3.8.5-openjdk-18' // Use the same Docker image for consistency
+                    image 'sonarsource/sonar-scanner-cli:latest' // Use the SonarQube Scanner Docker image
                     args '-u root:root' // Run commands as root user inside the container
                 }
+            }
+            environment {
+                SONAR_TOKEN = credentials('sonarqube-token') // Define environment variable for SonarQube token
             }
             steps {
                 echo 'Running SonarQube analysis with Sonar Scanner inside Docker as root...'
