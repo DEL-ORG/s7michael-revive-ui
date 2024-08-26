@@ -54,6 +54,7 @@ pipeline {
                     // Use the Jenkins build number as the Docker image tag
                     sh '''
                     #!/bin/bash
+                    cd ui
                     docker build -t your-dockerhub-username/your-image-name:${BUILD_NUMBER} .
                     '''
                 }
