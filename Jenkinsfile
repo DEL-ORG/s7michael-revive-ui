@@ -29,22 +29,19 @@ pipeline {
             }
         }
 
-        stage('SonarQube Analysis') {
+        stage('SonarQube analysis') {
             agent {
                 docker {
-                    image 'sonarsource/sonar-scanner-cli:latest' // Use the SonarQube Scanner Docker image
-                    args '-u root:root' // Run commands as root user inside the container
+                    image 'sonarsource/sonar-scanner-cli:4.7.0' // Use Sonar Scanner Docker image
                 }
             }
             environment {
-                SONAR_TOKEN = credentials('sonarqube-token') // Define environment variable for SonarQube token
+                CI = 'true'
+                scannerHome = '/opt/sonar-scanner' // Path to Sonar Scanner
             }
             steps {
-                echo 'Running SonarQube analysis with Sonar Scanner inside Docker as root...'
                 withSonarQubeEnv('Sonar') {
-                    sh '''
-                    /opt/sonar-scanner/bin/sonar-scanner
-                    '''
+                    sh "${scannerHome}/bin/sonar-scanner"
                 }
             }
         }
