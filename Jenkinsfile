@@ -21,7 +21,7 @@ pipeline {
             steps {
                 script {
                     // Run the unit tests using Maven wrapper
-                    sh './mvnw test'
+                    sh 'mvnw test'
                 }
             }
         }
