@@ -14,14 +14,15 @@ pipeline {
         stage('Unit Test') {
             agent {
                 docker {
-                    image 'openjdk:17' // Use an appropriate Docker image with Java installed
-                    args '-v /root/.m2:/root/.m2 -v /home/automation/workspace/S7STUDENTS/s7michael/s7michael-revive-ui:/workspace:rw -w /workspace --user root'
+                    image 'maven:3.8.5-openjdk-18' // Use an appropriate Docker image with Java and Maven installed
+                    args '-u root:root' // Run commands as root user inside the container
                 }
             }
             steps {
                 script {
-                    // Run the unit tests using Maven wrapper
-                    sh 'mvnw test'
+
+                    // Run the unit tests using Maven
+                    sh 'mvn test'
                 }
             }
         }
