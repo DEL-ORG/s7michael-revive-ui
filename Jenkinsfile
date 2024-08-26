@@ -15,6 +15,7 @@ pipeline {
             agent {
                 docker {
                     image 'openjdk:17' // Use an appropriate Docker image with Java installed
+                    args '-v /root/.m2:/root/.m2' // Mount the Maven cache to speed up the builds
                 }
             }
             steps {
