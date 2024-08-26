@@ -2,9 +2,10 @@ pipeline {
     agent any
 
     environment {
-        // Define SonarQube environment variables
+        // Define SonarQube server URL
         SONARQUBE_URL = 'http://your-sonarqube-server-url'
-        SONARQUBE_TOKEN = credentials('sonarqube-token') // Use Jenkins credentials for the SonarQube token
+        // Use the Jenkins credentials ID for the SonarQube token
+        SONARQUBE_TOKEN = credentials('sonarqube-token')
     }
 
     stages {
@@ -28,7 +29,7 @@ pipeline {
                 script {
                     // Run the unit tests using Maven
                     sh '''
-                    cd ui
+                    cd /home/automation/workspace/S7STUDENTS/s7michael/s7michael-revive-ui/ui
                     mvn test
                     '''
                 }
@@ -38,16 +39,15 @@ pipeline {
         stage('SonarQube Analysis') {
             agent {
                 docker {
-                    image 'maven:3.8.5-openjdk-18' // Use the same Docker image for SonarQube analysis
+                    image 'sonarsource/sonar-scanner-cli:latest' // Use SonarScanner Docker image
                     args '-u root:root' // Run commands as root user inside the container
                 }
             }
             steps {
                 script {
-                    // Run SonarQube analysis using Maven
+                    // Run SonarScanner with full path to the configuration file
                     sh '''
-                    cd ui
-                    mvn sonar:sonar
+                    /opt/sonar-scanner/bin/sonar-scanner
                     '''
                 }
             }
