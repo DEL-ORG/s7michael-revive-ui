@@ -29,6 +29,7 @@ pipeline {
                     // Run the unit tests using Maven
                     sh '''
                     cd ui
+                    pwd
                     mvn test
                     '''
                 }
