@@ -27,35 +27,36 @@ pipeline {
             }
         }
 
+        // Uncomment and modify as needed
         // stage('Unit Test') {
-            // agent {
-                // docker {
-                    // image 'maven:3.8.5-openjdk-18' // Use an appropriate Docker image with Java and Maven installed
-                    // args '-u root:root' // Run commands as root user inside the container
-                // }
-            // }
-            // steps {
-                // script {
-                    // Run the unit tests using Maven
-                    // sh '''
-                    // cd ui
-                    // mvn test
-                    // '''
-                // }
-            // }
+        //     agent {
+        //         docker {
+        //             image 'maven:3.8.5-openjdk-18' // Use an appropriate Docker image with Java and Maven installed
+        //             args '-u root:root' // Run commands as root user inside the container
+        //         }
+        //     }
+        //     steps {
+        //         script {
+        //             // Run the unit tests using Maven
+        //             sh '''
+        //             cd ui
+        //             mvn test
+        //             '''
+        //         }
+        //     }
         // }
 
         // stage('SonarQube analysis') {
-            // agent {
-                // docker {
-                    // image 'sonarsource/sonar-scanner-cli:5.0.1' // Use Sonar Scanner Docker image
-                // }
-            // }
-            // steps {
-                // withSonarQubeEnv('Sonar') {
-                    // sh "${scannerHome}/bin/sonar-scanner"
-                // }
-            // }
+        //     agent {
+        //         docker {
+        //             image 'sonarsource/sonar-scanner-cli:5.0.1' // Use Sonar Scanner Docker image
+        //         }
+        //     }
+        //     steps {
+        //         withSonarQubeEnv('Sonar') {
+        //             sh "${scannerHome}/bin/sonar-scanner"
+        //         }
+        //     }
         // }
 
         stage('Build Docker Image') {
@@ -77,40 +78,23 @@ pipeline {
                     git branch: 'dev', 
                         credentialsId: 'github-ssh', 
                         url: 'git@github.com:DEL-ORG/s7michael-deployment.git'
-
-                    // Logic to update Helm chart would go here
-                    // Example: Update values.yaml with the new image tag
-                    sh '''
-                    #!/bin/bash
-                    yq eval '.ui.tag = "${BUILD_NUMBER}"' -i chart/dev-values.yaml
-                    '''
                 }
             }
         }
 
-        // stage('Push Docker Image') {
-            // steps {
-                // script {
-                    // Log in to Docker Hub and push the image
-                    // withCredentials([usernamePassword(credentialsId: 'del-docker-hub-auth', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
-                        // sh '''
-                        // echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin
-                        // docker push your-dockerhub-username/your-image-name:${BUILD_NUMBER}
-                        // '''
-                    // }
-                // }
-            // }
-        // }
-
-        // stage('Deploy Helm Chart') {
-            // steps {
-                // script {
-                    // Deploy the updated Helm chart
-                    // sh '''
-                    // helm upgrade --install your-release-name ./path-to-your-helm-chart --values values.yaml
-                    // '''
-                // }
-            // }
-        // }
+        stage('Update Helm Chart and push') {
+            steps {
+                script {
+                    sh '''
+                    yq e '.catalog.tag = "${BUILD_NUMBER}"' -i ./chart/dev-values.yaml
+                    git config user.email "michaelsobamowo@gmail.com"
+                    git config user.name "michael-ayo"
+                    git add -A
+                    git commit -m "Update image tag to ${BUILD_NUMBER}"
+                    git push --set-upstream origin dev || echo "Push failed"
+                    '''
+                }
+            }
+        }
     }
 }
