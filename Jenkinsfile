@@ -30,7 +30,7 @@ pipeline {
         stage('Unit Test') {
             agent {
                 docker {
-                    image 'maven:3.9.8'
+                    image 'maven:3.8.5-openjdk-18'
                     args '-u root'
                 }
             }
