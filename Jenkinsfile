@@ -1,6 +1,10 @@
 pipeline {
     agent any
 
+    options {
+        buildDiscarder(logRotator(numToKeepStr: '10')) // Keep the last 10 builds
+    }
+
     environment {
         CI = 'true'
         scannerHome = '/opt/sonar-scanner' // Path to Sonar Scanner
@@ -8,6 +12,12 @@ pipeline {
     }
 
     stages {
+        stage('Clean Workspace') {
+            steps {
+                cleanWs() // Clean the workspace to avoid any conflicts
+            }
+        }
+
         stage('Checkout') {
             steps {
                 // Checkout the code from the Git repository
@@ -29,7 +39,6 @@ pipeline {
                     // Run the unit tests using Maven
                     sh '''
                     cd ui
-                    pwd
                     mvn test
                     '''
                 }
@@ -54,7 +63,6 @@ pipeline {
                 script {
                     // Use the Jenkins build number as the Docker image tag
                     sh '''
-                    #!/bin/bash
                     cd ui
                     docker build -t your-dockerhub-username/your-image-name:${BUILD_NUMBER} .
                     '''
@@ -62,15 +70,45 @@ pipeline {
             }
         }
 
-        stage('Update and Push Helm Chart') {
+        stage('Checkout Catalog Repo') {
             steps {
-                // Switch to the second repository and update Helm chart
+                // Switch to the second repository to update the Helm chart
                 script {
                     git branch: 'dev', 
                         credentialsId: 'github-ssh', 
                         url: 'git@github.com:DEL-ORG/s7michael-deployment.git'
 
                     // Logic to update Helm chart would go here
+                    // Example: Update values.yaml with the new image tag
+                    sh '''
+                    #!/bin/bash
+                    yq eval '.image.tag = "${BUILD_NUMBER}"' -i values.yaml
+                    '''
+                }
+            }
+        }
+
+        stage('Push Docker Image') {
+            steps {
+                script {
+                    // Log in to Docker Hub and push the image
+                    withCredentials([usernamePassword(credentialsId: 'del-docker-hub-auth', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
+                        sh '''
+                        echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin
+                        docker push your-dockerhub-username/your-image-name:${BUILD_NUMBER}
+                        '''
+                    }
+                }
+            }
+        }
+
+        stage('Deploy Helm Chart') {
+            steps {
+                script {
+                    // Deploy the updated Helm chart
+                    sh '''
+                    helm upgrade --install your-release-name ./path-to-your-helm-chart --values values.yaml
+                    '''
                 }
             }
         }
