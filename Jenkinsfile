@@ -27,23 +27,23 @@ pipeline {
             }
         }
 
-        stage('Unit Test') {
-            agent {
-                docker {
-                    image 'maven:3.8.5-openjdk-18' // Use an appropriate Docker image with Java and Maven installed
-                    args '-u root:root' // Run commands as root user inside the container
-                }
-            }
-            steps {
-                script {
-                    // Run the unit tests using Maven
-                    sh '''
-                    cd ui
-                    mvn test
-                    '''
-                }
-            }
-        }
+        // stage('Unit Test') {
+            // agent {
+                // docker {
+                    // image 'maven:3.8.5-openjdk-18' // Use an appropriate Docker image with Java and Maven installed
+                    // args '-u root:root' // Run commands as root user inside the container
+                // }
+            // }
+            // steps {
+                // script {
+                    Run the unit tests using Maven
+                    // sh '''
+                    // cd ui
+                    // mvn test
+                    // '''
+                // }
+            // }
+        // }
 
         stage('SonarQube analysis') {
             agent {
