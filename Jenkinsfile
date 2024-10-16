@@ -82,35 +82,35 @@ pipeline {
                     // Example: Update values.yaml with the new image tag
                     sh '''
                     #!/bin/bash
-                    yq eval '.image.tag = "${BUILD_NUMBER}"' -i values.yaml
+                    yq eval '.ui.tag = "${BUILD_NUMBER}"' -i chart/dev-values.yaml
                     '''
                 }
             }
         }
 
-        stage('Push Docker Image') {
-            steps {
-                script {
+        // stage('Push Docker Image') {
+            // steps {
+                // script {
                     // Log in to Docker Hub and push the image
-                    withCredentials([usernamePassword(credentialsId: 'del-docker-hub-auth', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
-                        sh '''
-                        echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin
-                        docker push your-dockerhub-username/your-image-name:${BUILD_NUMBER}
-                        '''
-                    }
-                }
-            }
-        }
+                    // withCredentials([usernamePassword(credentialsId: 'del-docker-hub-auth', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
+                        // sh '''
+                        // echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin
+                        // docker push your-dockerhub-username/your-image-name:${BUILD_NUMBER}
+                        // '''
+                    // }
+                // }
+            // }
+        // }
 
-        stage('Deploy Helm Chart') {
-            steps {
-                script {
+        // stage('Deploy Helm Chart') {
+            // steps {
+                // script {
                     // Deploy the updated Helm chart
-                    sh '''
-                    helm upgrade --install your-release-name ./path-to-your-helm-chart --values values.yaml
-                    '''
-                }
-            }
-        }
+                    // sh '''
+                    // helm upgrade --install your-release-name ./path-to-your-helm-chart --values values.yaml
+                    // '''
+                // }
+            // }
+        // }
     }
 }
