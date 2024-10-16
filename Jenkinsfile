@@ -45,18 +45,18 @@ pipeline {
             // }
         // }
 
-        stage('SonarQube analysis') {
-            agent {
-                docker {
-                    image 'sonarsource/sonar-scanner-cli:5.0.1' // Use Sonar Scanner Docker image
-                }
-            }
-            steps {
-                withSonarQubeEnv('Sonar') {
-                    sh "${scannerHome}/bin/sonar-scanner"
-                }
-            }
-        }
+        // stage('SonarQube analysis') {
+            // agent {
+                // docker {
+                    // image 'sonarsource/sonar-scanner-cli:5.0.1' // Use Sonar Scanner Docker image
+                // }
+            // }
+            // steps {
+                // withSonarQubeEnv('Sonar') {
+                    // sh "${scannerHome}/bin/sonar-scanner"
+                // }
+            // }
+        // }
 
         stage('Build Docker Image') {
             steps {
@@ -64,7 +64,6 @@ pipeline {
                     // Use the Jenkins build number as the Docker image tag
                     sh '''
                     cd ui
-                    pwd
                     docker build -t your-dockerhub-username/your-image-name:${BUILD_NUMBER} .
                     '''
                 }
