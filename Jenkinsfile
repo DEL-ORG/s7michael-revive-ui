@@ -36,7 +36,7 @@ pipeline {
             // }
             // steps {
                 // script {
-                    Run the unit tests using Maven
+                    // Run the unit tests using Maven
                     // sh '''
                     // cd ui
                     // mvn test
@@ -64,6 +64,7 @@ pipeline {
                     // Use the Jenkins build number as the Docker image tag
                     sh '''
                     cd ui
+                    pwd
                     docker build -t your-dockerhub-username/your-image-name:${BUILD_NUMBER} .
                     '''
                 }
