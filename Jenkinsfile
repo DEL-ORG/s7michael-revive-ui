@@ -76,7 +76,7 @@ pipeline {
             }
         }
 
-        stage('Checkout Catalog Repo') {
+        stage('Checkout UI Repo') {
             steps {
                 // Switch to the second repository to update the Helm chart
                 script {
@@ -91,7 +91,7 @@ pipeline {
             steps {
                 script {
                     sh '''
-                    yq e '.catalog.tag = "${BUILD_NUMBER}"' -i ./chart/dev-values.yaml
+                    yq e '.ui.tag = "'"${BUILD_NUMBER}"'"' -i ./chart/dev-values.yaml
                     git config user.email "michaelsobamowo@gmail.com"
                     git config user.name "michael-ayo"
                     git add -A
