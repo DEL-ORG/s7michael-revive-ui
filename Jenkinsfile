@@ -46,18 +46,25 @@ pipeline {
         //     }
         // }
 
-        // stage('SonarQube analysis') {
-        //     agent {
-        //         docker {
-        //             image 'sonarsource/sonar-scanner-cli:5.0.1' // Use Sonar Scanner Docker image
-        //         }
-        //     }
-        //     steps {
-        //         withSonarQubeEnv('Sonar') {
-        //             sh "${scannerHome}/bin/sonar-scanner"
-        //         }
-        //     }
-        // }
+        stage('SonarQube Analysis') {
+            agent {
+                docker {
+                    image 'sonarsource/sonar-scanner-cli:11.0'
+                    args '-u root'
+                }
+            }
+            environment {
+                CI = 'true'
+                scannerHome = '/opt/sonar-scanner'
+            }
+            steps {
+                withSonarQubeEnv('Sonar') {
+                    sh '''
+                    ${scannerHome}/bin/sonar-scanner
+                    '''
+                }
+            }
+        }
 
         stage('Build Docker Image') {
             steps {
