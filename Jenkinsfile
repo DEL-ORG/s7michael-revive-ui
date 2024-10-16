@@ -60,5 +60,18 @@ pipeline {
                 }
             }
         }
+
+        stage('Update and Push Helm Chart') {
+            steps {
+                // Switch to the second repository and update Helm chart
+                script {
+                    git branch: 'dev', 
+                        credentialsId: 'github-ssh', 
+                        url: 'git@github.com:DEL-ORG/s7michael-deployment.git'
+
+                    // Logic to update Helm chart would go here
+                }
+            }
+        }
     }
 }
